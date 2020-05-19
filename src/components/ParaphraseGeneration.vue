@@ -1,9 +1,18 @@
 <template>
   <v-container fluid class="py-0">
-    <v-subheader :inset="inset">Paraphrase Generation</v-subheader>
-    <v-card outlined max-height="200px" class="overflow-y-auto">
-      <div v-for="paraphrase in paraphrases" :key="paraphrase" v-text="paraphrase"></div>
-    </v-card>
+    <v-header :inset="inset">Paraphrase Generation</v-header>
+
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-list class="overflow-y-auto">
+            <v-list-item style="min-height:0px" v-for="(paraphrase, i) in paraphrases" :key="i">
+              <v-list-item-content style="padding:0px" v-text="paraphrase"></v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

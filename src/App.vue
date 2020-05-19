@@ -2,7 +2,7 @@
   <v-app>
     <toolbar></toolbar>
     <v-container class="grey lighten-5 pa-0">
-      <v-row style="max-height:500px">
+      <v-row>
         <v-col class="py-0">
           <grammar-editor></grammar-editor>
         </v-col>

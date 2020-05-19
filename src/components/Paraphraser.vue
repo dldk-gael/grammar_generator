@@ -1,12 +1,12 @@
 <template>
   <v-container fluid class="py-0">
-    <v-subheader :inset="inset">Paraphraser</v-subheader>
+    <v-header :inset="inset">Paraphraser</v-header>
     <v-row class="py-0">
       <v-col style = "max-height:85px" class="px-2">
         <v-text-field v-model="sentence" label="Sentence to paraphrase" outlined></v-text-field>
       </v-col>
     </v-row>
-    <v-row :align="align" no-gutters style="height: 150px">
+    <v-row style="height: 150px">
       <v-col class="px-2">
         <v-text-field label="Number of samples" placeholder="10" outlined dense></v-text-field>
       </v-col>
@@ -14,7 +14,7 @@
         <v-text-field label="Keep top" placeholder="2" outlined dense></v-text-field>
       </v-col>
       <v-col class="px-2">
-        <v-btn depressed color="primary">Generate paraphrase</v-btn>
+        <v-btn block height="39px" color="primary">Generate paraphrase</v-btn>
       </v-col>
     </v-row>
   </v-container>

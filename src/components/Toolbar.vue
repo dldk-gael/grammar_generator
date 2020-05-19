@@ -20,7 +20,7 @@
       dense
       v-model="local_port"
       :rules="[validatePort]"
-      style="padding-top: 20px; padding-left:10px; max-width=100px"
+      style="padding-top: 20px; padding-left:10px; max-width:100px"
     ></v-text-field>
     <v-spacer></v-spacer>
     <v-alert

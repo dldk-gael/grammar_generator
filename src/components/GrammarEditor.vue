@@ -1,8 +1,7 @@
 <template>
-  <v-container fluid class="py-0">
-    <v-subheader :inset="inset">Grammar Editor</v-subheader>
-    <v-textarea class="py-0" no-resize :value="grammar" outlined rows="15"></v-textarea>
-    
+  <v-container fluid>
+    <v-header :inset="inset">Grammar Editor</v-header>
+    <v-textarea style="line-height: 5px" class="pt-2" no-resize :value="grammar" outlined rows="17"></v-textarea>
   </v-container>
 </template>
 
@@ -16,4 +15,9 @@ export default {
 </script>
 
 <style>
+.text-area-row {
+    height: 50vh;
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
 </style>
