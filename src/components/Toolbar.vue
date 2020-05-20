@@ -70,22 +70,23 @@ export default {
   methods: {
     tryConnect() {
       let me = this;
-      axios.get(me.$store.getters.server_address).then(
-        response => {
-          me.is_connected = true
+      axios
+        .get(me.$store.getters.server_address)
+        .then(response => {
+          me.is_connected = true;
           console.log(me.$store.getters.server_address);
           console.log(response.data);
-        }).catch(
-        error => {
+        })
+        .catch(error => {
           me.is_connected = false;
           console.log(error);
-        }
-      )
+        });
     }
   },
   created() {
-   this.tryConnect()
-   setInterval(this.tryConnect, 5000) 
+    this.$store.commit("updateParaphrases", ["test"]);
+    this.tryConnect();
+    setInterval(this.tryConnect, 5000);
   }
 };
 </script>

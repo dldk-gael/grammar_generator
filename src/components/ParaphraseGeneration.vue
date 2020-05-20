@@ -23,7 +23,13 @@ export default {
   computed: {
     paraphrases: {
       get() {
+        console.log(this.$store.state.paraphrases)
         return this.$store.state.paraphrases;
+      }
+    },
+    waitingParaphrase: {
+      get() {
+        return this.$store.state.waitingParaphrase
       }
     }
   }

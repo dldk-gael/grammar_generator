@@ -19,13 +19,14 @@
     </v-row>
     <v-row style="height: 150px">
       <v-col class="px-2">
-        <v-text-field label="Number of samples" v-model="number_of_samples" outlined dense></v-text-field>
+        <v-text-field label="Number of generations" v-model="number_of_samples" outlined dense></v-text-field>
       </v-col>
       <v-col class="px-2">
         <v-text-field label="Keep top" v-model="keep_top" outlined dense></v-text-field>
       </v-col>
       <v-col class="px-2">
-        <v-btn block height="39px" color="primary" @click="paraphrase()">Generate paraphrase</v-btn>
+        <v-btn block height="39px" color="primary"  v-if="waitingParaphrase == false" @click="paraphrase()">Generate paraphrase</v-btn>
+        <v-btn block height="39px" color="red"  v-if="waitingParaphrase" @click="abort()">Abort</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -37,6 +38,7 @@ export default {
   name: "Paraphraser",
   data: () => ({
     forbidden_words: [],
+    waitingParaphrase: false,
     sentence: "",
     number_of_samples: 10,
     keep_top: 2
@@ -48,6 +50,7 @@ export default {
   },
   methods: {
     paraphrase() {
+      this.waitingParaphrase = true;
       var me = this;
       console.log("paraphrase");
       let message = {
@@ -59,6 +62,7 @@ export default {
       };
       axios.post(this.$store.getters.server_address, message).then(reponse => {
         me.$store.commit("updateParaphrases", reponse.data["paraphrases"]);
+        this.waitingParaphrase = false;
       });
     }
   }
