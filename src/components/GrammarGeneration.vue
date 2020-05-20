@@ -1,27 +1,27 @@
 <template>
   <v-container fluid>
-    <v-header :inset="inset">Sample from Grammar</v-header>
-    <v-row class="px-1" dense  style="max-height:40px">
+    <span>Sample from Grammar</span>
+    <v-row class="px-1" dense style="max-height:40px">
       <v-col>
-      <v-radio-group v-model="row" row class="pt-0 mt-1">
-        <v-radio label="MCTS" value="radio-1"></v-radio>
-        <v-radio label="RandomSearch" value="radio-2"></v-radio>
-      </v-radio-group>
+        <v-radio-group v-model="strategy" row class="pt-0 mt-1">
+          <v-radio label="MCTS" value="MCTS"></v-radio>
+          <v-radio label="RandomSearch" value="RandomSearch"></v-radio>
+        </v-radio-group>
       </v-col>
       <v-col>
-      <v-switch class="pt-0 mt-1" v-model="use_gpt2" label="Use GPT2 to score sentence"></v-switch>
+        <v-switch class="pt-0 mt-1" v-model="use_gpt2" label="Use GPT2 to score sentence"></v-switch>
       </v-col>
     </v-row>
 
     <v-row style="max-height:75px">
       <v-col class="px-2">
-        <v-text-field label="Number of samples" placeholder="10" outlined dense></v-text-field>
+        <v-text-field label="Number of samples" v-model="number_of_samples" outlined dense></v-text-field>
       </v-col>
       <v-col class="px-2">
-        <v-text-field label="Keep top" placeholder="2" outlined dense></v-text-field>
+        <v-text-field label="Keep top" v-if="strategy == 'MCTS'" v-model="keep_top" outlined dense></v-text-field>
       </v-col>
       <v-col class="px-2">
-        <v-btn block height="39px" color="primary">
+        <v-btn block height="39px" color="primary" @click="grammarSample()">
           Sample
           <br />from grammar
         </v-btn>
@@ -43,31 +43,34 @@
 
 
 <script>
+import axios from "axios";
 export default {
   name: "GrammarGeneration",
   data: () => ({
-    strategies: ["MCTS", "RandomSearch", "Random (No heuristic)"],
+    strategy: "RandomSearch",
     use_gpt2: true,
-    generations: [
-      "generation 1",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3",
-      "generation 2",
-      "generation 3"
-    ]
-  })
+    number_of_samples:10,
+    keep_top: 2,
+    generations: ["generation 1", "generation 2", "generation 3"]
+  }),
+  methods: {
+    grammarSample() {
+      console.log("grammar_sample")
+      let message = {
+        order: "grammar_sample",
+        number_of_samples: parseInt(this.number_of_samples),
+        keep_top: parseInt(this.keep_top),
+        use_gpt2: this.use_gpt2,
+        strategy: this.strategy,
+        grammar: this.$store.state.grammar
+      };
+      axios.post(this.$store.getters.server_address, message).then(
+        reponse => { 
+          this.generations = reponse.data["generations"]
+        }
+      );
+    }
+  }
 };
 </script>
 

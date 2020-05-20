@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="py-0">
-    <v-header :inset="inset">Paraphrase Generation</v-header>
+    <span>Paraphrase Generation</span>
 
     <v-row>
       <v-col>
@@ -19,12 +19,14 @@
 <script>
 export default {
   name: "ParaphraseGeneration",
-  data: () => ({
-    sentence: "",
-    nb_samples: 10,
-    paraphrases: ["Paraphrase 1", "Paraphrase 2", "Paraphrase 3"],
-    top_n: 2
-  })
+  data: () => ({}),
+  computed: {
+    paraphrases: {
+      get() {
+        return this.$store.state.paraphrases;
+      }
+    }
+  }
 };
 </script>
 
