@@ -11,6 +11,7 @@ export default new Vuex.Store({
         backend_domain: "localhost",
         backend_port: "5000",
         paraphrases: [""],
+        paraphrases_status: "",
         waitingParaphrase: false
     },
     getters: {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
         },
         updateParaphrases(state, new_paraphrases) {
             state.paraphrases = new_paraphrases
+        },
+        updateParaphrasesStatus(state, new_status) {
+            state.paraphrases_status = new_status
         },
         updateWaitingParaphrase(state, new_value){
             state.waitingParaphrase = new_value

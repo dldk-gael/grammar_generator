@@ -38,20 +38,29 @@ export default {
   name: "Paraphraser",
   data: () => ({
     forbidden_words: [],
-    waitingParaphrase: false,
     sentence: "",
     number_of_samples: 10,
     keep_top: 2,
     status_addr: ""
   }),
   computed: {
-    words_in_sentence() {
-      return this.sentence.split(" ");
+    waitingParaphrase: {
+      get() {
+        return this.$store.state.waitingParaphrase;
+      }
     }
   },
+
+  created() {
+    this.$store.commit("updateWaitingParaphrase", false);
+  },
+
   methods: {
+    words_in_sentence() {
+      return this.sentence.split(" ");
+    },
     paraphrase() {
-      this.waitingParaphrase = true;
+      this.$store.commit("updateWaitingParaphrase", true);
       //var me = this;
       console.log("paraphrase");
       let message = {
@@ -64,37 +73,47 @@ export default {
         .post(this.$store.getters.server_address + "/paraphrase", message)
         .then(reponse => {
           console.log(reponse.data);
-          this.abort_location = reponse.data["abort_location"]
-          this.check_paraphrase_status(reponse.data["status_location"])
+          this.abort_location = reponse.data["abort_location"];
+          this.check_paraphrase_status(reponse.data["status_location"]);
         });
     },
 
     check_paraphrase_status(status_location) {
-      console.log(status_location)
+      console.log(status_location);
       axios
         .get(this.$store.getters.server_address + status_location)
         .then(reponse => {
-          console.log(reponse.data)
+          console.log(reponse.data);
           let status = reponse.data["status"];
+          let paraphrases_status = status
+          if (status == "PROGRESS"){
+            paraphrases_status = status.concat(
+              ": ",
+              reponse.data["details"]
+            );
+          }
+          this.$store.commit("updateParaphrasesStatus", paraphrases_status)
           if (status == "SUCCESS") {
             this.$store.commit(
               "updateParaphrases",
-              reponse.data["paraphrases"]
+              reponse.data["results"]
             );
-            this.waitingParaphrase = false;
-          } else if ((status == "PENDING") || (status == "PROGRESS")) {
+            this.$store.commit("updateWaitingParaphrase", false);
+          } else if (status == "PENDING" || status == "PROGRESS") {
             setTimeout(() => {
               this.check_paraphrase_status(status_location);
-            }, 2000)
+            }, 2000);
           } else {
-            this.waitingParaphrase = false;
+            this.$store.commit("updateWaitingParaphrase", false);
           }
         });
     },
     abort() {
-      axios.get(this.$store.getters.server_address + this.abort_location).then(() => {
-        this.waitingParaphrase = false;
-      })
+      axios
+        .get(this.$store.getters.server_address + this.abort_location)
+        .then(() => {
+          this.$store.commit("updateWaitingParaphrase", false);
+        });
     }
   }
 };

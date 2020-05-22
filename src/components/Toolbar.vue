@@ -24,7 +24,6 @@
     <v-alert
       style="margin-top: 10px"
       dense
-      outlined
       type="success"
       v-if="is_connected"
     >Connected to python backend</v-alert>
@@ -32,7 +31,6 @@
       style="margin-top: 10px"
       v-else
       dense
-      outlined
       type="error"
     >Fail to connect to python backend</v-alert>
   </v-toolbar>
@@ -84,9 +82,8 @@ export default {
     }
   },
   created() {
-    this.$store.commit("updateParaphrases", ["test"]);
     this.tryConnect();
-    //setInterval(this.tryConnect, 5000);
+    setInterval(this.tryConnect, 5000);
   }
 };
 </script>
