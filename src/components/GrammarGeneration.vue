@@ -35,12 +35,13 @@
           Sample
           <br />from grammar
         </v-btn>
-          <v-btn v-if="waitingSampling" block height="39px" color="red" @click="abortSample()">Abort</v-btn>
+        <v-btn v-if="waitingSampling" block height="39px" color="red" @click="abort">Abort</v-btn>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="py-0 px-2">
-        <v-card>
+        <v-text-field v-if="waitingSampling" loading disabled></v-text-field>
+        <v-card v-else>
           <v-list style="max-height: 377px" class="overflow-y-auto">
             <v-list-item style="min-height:0px" v-for="(generation, i) in generations" :key="i">
               <v-list-item-content style="padding:0px" v-text="generation"></v-list-item-content>
@@ -62,24 +63,60 @@ export default {
     number_of_samples: 10,
     waitingSampling: false,
     keep_top: 2,
-    generations: []
+    generations: [],
+    abort_location: ""
   }),
   methods: {
     grammarSample() {
-      console.log("grammar_sample");
       this.waitingSampling = true;
-      let message = {
-        order: "grammar_sample",
-        number_of_samples: parseInt(this.number_of_samples),
-        keep_top: parseInt(this.keep_top),
-        use_gpt2: this.use_gpt2,
-        strategy: this.strategy,
-        grammar: this.$store.state.grammar
-      };
-      axios.post(this.$store.getters.server_address, message).then(reponse => {
-        this.generations = reponse.data["generations"];
-        this.waitingSampling = false;
+      let message = {};
+      let task_address = {};
+      if (this.strategy == "Random Sampling") {
+        message = {
+          number_of_samples: parseInt(this.number_of_samples),
+          grammar: this.$store.state.grammar
+        };
+        task_address =
+          this.$store.getters.server_address + "/grammar/random_search";
+      } else {
+        message = {
+          number_of_samples: parseInt(this.number_of_samples),
+          keep_top: parseInt(this.keep_top),
+          grammar: this.$store.state.grammar
+        };
+        task_address = this.$store.getters.server_address + "/grammar/mcts";
+      }
+      axios.post(task_address, message).then(reponse => {
+        this.abort_location = reponse.data["abort_location"];
+        this.checkGenerationStatus(reponse.data["status_location"]);
       });
+    },
+
+    checkGenerationStatus(status_location) {
+      console.log(status_location);
+      axios
+        .get(this.$store.getters.server_address + status_location)
+        .then(reponse => {
+          let status = reponse.data["status"];
+          if (status == "SUCCESS") {
+            this.generations = reponse.data["generations"];
+            this.waitingSampling = false;
+          } else if (status == "PENDING" || status == "PROGRESS") {
+            setTimeout(() => {
+              this.checkGenerationStatus(status_location);
+            }, 500);
+          } else {
+            this.waitingSampling = false;
+          }
+        });
+    },
+
+    abort() {
+      axios
+        .get(this.$store.getters.server_address + this.abort_location)
+        .then(() => {
+          this.waitingSampling = false;
+        });
     }
   }
 };

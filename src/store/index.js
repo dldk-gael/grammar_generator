@@ -15,7 +15,7 @@ export default new Vuex.Store({
     },
     getters: {
         server_address : state => {
-            return "http://" + state.backend_domain + ":" + state.backend_port + "/";
+            return "http://" + state.backend_domain + ":" + state.backend_port;
         }
     },
     mutations: {

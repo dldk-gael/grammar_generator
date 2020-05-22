@@ -71,7 +71,7 @@ export default {
     tryConnect() {
       let me = this;
       axios
-        .get(me.$store.getters.server_address)
+        .get(me.$store.getters.server_address + "/ping")
         .then(response => {
           me.is_connected = true;
           console.log(me.$store.getters.server_address);
@@ -86,7 +86,7 @@ export default {
   created() {
     this.$store.commit("updateParaphrases", ["test"]);
     this.tryConnect();
-    setInterval(this.tryConnect, 5000);
+    //setInterval(this.tryConnect, 5000);
   }
 };
 </script>
