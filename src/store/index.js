@@ -14,7 +14,6 @@ export default new Vuex.Store({
         paraphrases_status: "",
         paraphrase_input: [],
         waitingParaphrase: false,
-        parse_tree: "",
     },
     getters: {
         server_address : state => {
@@ -43,14 +42,8 @@ export default new Vuex.Store({
         addParaphraseInput(state, new_input){
             state.paraphrase_input.push(new_input)
         },
-        modifyParaphraseInput(state, index, new_input){
-            state.paraphrase_input[index] = new_input  
-        },
         removeParaphraseInput(state, index){
             state.paraphrase_input.splice(index, 1)
-        },
-        updateParseTree(state, new_parse_tree){
-            state.parse_tree = new_parse_tree
         }
     },
     actions: {}
