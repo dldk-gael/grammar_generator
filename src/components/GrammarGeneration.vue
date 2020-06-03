@@ -42,11 +42,18 @@
       <v-col class="py-0 px-2">
         <v-text-field v-if="waitingSampling" loading disabled></v-text-field>
         <v-alert v-if="waitingSampling" type="info" v-text="generations_status"></v-alert>
-        <v-card v-else>
-          <v-list style="max-height: 377px" dense rounded class="overflow-y-auto">
-            <v-list-item style="min-height:0px" v-for="(generation, i) in generations" :key="i">
-              <span>{{i+1}}. {{generation}}</span>
-            </v-list-item>
+        <v-card v-else tile>
+          <v-list style="max-height: 377px" dense class="overflow-y-auto">
+            <v-list-item-group color="primary">
+              <v-list-item
+                @click="selectGeneration(generation)"
+                style="min-height:0px"
+                v-for="(generation, i) in generations"
+                :key="i"
+              >
+                <span>{{i+1}}. {{generation}}</span>
+              </v-list-item>
+            </v-list-item-group>
           </v-list>
         </v-card>
       </v-col>
@@ -67,7 +74,7 @@ export default {
     keep_top: 2,
     generations: [],
     generations_status: "",
-    abort_location: ""
+    abort_location: "",
   }),
   methods: {
     grammarSample() {
@@ -128,6 +135,10 @@ export default {
         .then(() => {
           this.waitingSampling = false;
         });
+    },
+
+    selectGeneration(generation) {
+      this.$store.commit("addParaphraseInput", generation)
     }
   }
 };

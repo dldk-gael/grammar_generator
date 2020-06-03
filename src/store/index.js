@@ -10,9 +10,11 @@ export default new Vuex.Store({
         grammar: "s -> n v\nn -> 'gael'\nv -> 'play' | 'plays'",
         backend_domain: "localhost",
         backend_port: "5000",
-        paraphrases: [""],
+        paraphrases: ["I like to play tennis when the weather is good.", "paraphrase 2"],
         paraphrases_status: "",
-        waitingParaphrase: false
+        paraphrase_input: [],
+        waitingParaphrase: false,
+        parse_tree: "",
     },
     getters: {
         server_address : state => {
@@ -37,6 +39,18 @@ export default new Vuex.Store({
         },
         updateWaitingParaphrase(state, new_value){
             state.waitingParaphrase = new_value
+        },
+        addParaphraseInput(state, new_input){
+            state.paraphrase_input.push(new_input)
+        },
+        modifyParaphraseInput(state, index, new_input){
+            state.paraphrase_input[index] = new_input  
+        },
+        removeParaphraseInput(state, index){
+            state.paraphrase_input.splice(index, 1)
+        },
+        updateParseTree(state, new_parse_tree){
+            state.parse_tree = new_parse_tree
         }
     },
     actions: {}

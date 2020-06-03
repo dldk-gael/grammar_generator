@@ -18,6 +18,11 @@
           <paraphrase-generation></paraphrase-generation>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <parser></parser>
+        </v-col>
+      </v-row>
     </v-container>
   </v-app>
 </template>
@@ -25,9 +30,11 @@
 <script>
 import Toolbar from "./components/Toolbar";
 import GrammarEditor from "./components/GrammarEditor";
-import GrammarGeneration from "./components/GrammarGeneration"
-import Paraphraser from "./components/Paraphraser"
-import ParaphraseGeneration from "./components/ParaphraseGeneration"
+import GrammarGeneration from "./components/GrammarGeneration";
+import Paraphraser from "./components/Paraphraser";
+import ParaphraseGeneration from "./components/ParaphraseGeneration";
+import Parser from "./components/Parser";
+
 export default {
   name: "App",
 
@@ -36,11 +43,12 @@ export default {
     GrammarEditor,
     GrammarGeneration,
     Paraphraser,
-    ParaphraseGeneration
+    ParaphraseGeneration,
+    Parser
   },
 
   data: () => ({
     //
-  })
+  }),
 };
 </script>

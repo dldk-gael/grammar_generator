@@ -2,8 +2,29 @@
   <v-container fluid class="py-0">
     <span>Paraphraser</span>
     <v-row class="py-0">
-      <v-col style="max-height:85px" class="px-2">
-        <v-text-field v-model="sentence" label="Sentence to paraphrase" outlined></v-text-field>
+      <v-col>
+        <v-list color="transparent" style="max-height: 377px" dense class="overflow-y-auto, py-0">
+          <v-list-item
+            style="min-height:0px"
+            v-for="(paraphrase_input, i) in paraphraseInput"
+            :key="i"
+          >
+            <v-btn class="mx-2" fab x-small color="primary">
+              <v-icon @click="deleteParaphraseInput(i)">mdi-minus</v-icon>
+            </v-btn>
+            <v-text-field class="py-0" v-model="paraphraseInput[i]" single-line></v-text-field>
+          </v-list-item>
+          <v-list-item>
+            <v-btn class="mx-2" fab x-small color="primary">
+              <v-icon @click="addParaphraseInput">mdi-plus</v-icon>
+            </v-btn>
+            <v-text-field
+              v-on:keyup.enter="addParaphraseInput"
+              v-model="sentence"
+              label="Add a sentence to paraphrase"
+            ></v-text-field>
+          </v-list-item>
+        </v-list>
       </v-col>
     </v-row>
     <v-row>
@@ -48,6 +69,11 @@ export default {
       get() {
         return this.$store.state.waitingParaphrase;
       }
+    },
+    paraphraseInput: {
+      get() {
+        return this.$store.state.paraphrase_input;
+      }
     }
   },
 
@@ -56,18 +82,20 @@ export default {
   },
 
   methods: {
+    paraphraseInputIdx(i) {
+      console.log(i);
+    },
     words_in_sentence() {
       return this.sentence.split(" ");
     },
     paraphrase() {
       this.$store.commit("updateWaitingParaphrase", true);
-      //var me = this;
       console.log("paraphrase");
       let message = {
         number_of_samples: parseInt(this.number_of_samples),
         forbidden_words: this.forbidden_words,
         keep_top: parseInt(this.keep_top),
-        sentence_to_paraphrase: this.sentence
+        sentences_to_paraphrase: this.$store.state.paraphrase_input
       };
       axios
         .post(this.$store.getters.server_address + "/paraphrase", message)
@@ -85,19 +113,13 @@ export default {
         .then(reponse => {
           console.log(reponse.data);
           let status = reponse.data["status"];
-          let paraphrases_status = status
-          if (status == "PROGRESS"){
-            paraphrases_status = status.concat(
-              ": ",
-              reponse.data["details"]
-            );
+          let paraphrases_status = status;
+          if (status == "PROGRESS") {
+            paraphrases_status = status.concat(": ", reponse.data["details"]);
           }
-          this.$store.commit("updateParaphrasesStatus", paraphrases_status)
+          this.$store.commit("updateParaphrasesStatus", paraphrases_status);
           if (status == "SUCCESS") {
-            this.$store.commit(
-              "updateParaphrases",
-              reponse.data["results"]
-            );
+            this.$store.commit("updateParaphrases", reponse.data["results"]);
             this.$store.commit("updateWaitingParaphrase", false);
           } else if (status == "PENDING" || status == "PROGRESS") {
             setTimeout(() => {
@@ -114,6 +136,13 @@ export default {
         .then(() => {
           this.$store.commit("updateWaitingParaphrase", false);
         });
+    },
+    deleteParaphraseInput(i) {
+      this.$store.commit("removeParaphraseInput", i);
+    },
+    addParaphraseInput() {
+      this.$store.commit("addParaphraseInput", this.sentence);
+      this.sentence = "";
     }
   }
 };
